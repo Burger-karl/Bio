@@ -1,563 +1,1318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalu Ifeanyi Obinna — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     GLOBAL RESET & VARIABLES
+  ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      <!--=============== FAVICON ===============-->
-      <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
+  :root {
+    --black:   #080A0F;
+    --off-white: #F2F0E8;
+    --cream:   #E8E4D9;
+    --accent:  #C8FF4D;   /* lime green */
+    --accent2: #4DFFB4;   /* teal green */
+    --muted:   #8A8A7A;
+    --card-bg: #0F1218;
+    --border:  rgba(255,255,255,0.07);
+    --glow:    rgba(200,255,77,0.15);
+  }
 
-      <!--=============== REMIXICONS ===============-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.4.0/remixicon.css" crossorigin="">
+  html { scroll-behavior: smooth; }
 
-      <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="assets/css/style.css">
+  body {
+    background: var(--black);
+    color: var(--off-white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none; /* custom cursor */
+  }
 
-      <title>Charles Portfolio</title>
+  /* ============================================================
+     CUSTOM CURSOR
+  ============================================================ */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,255,77,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.12s ease-out, width 0.25s, height 0.25s, opacity 0.3s;
+  }
+  body:hover #cursor { opacity: 1; }
+
+  /* ============================================================
+     NOISE GRAIN OVERLAY
+  ============================================================ */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028;
+    pointer-events: none;
+    z-index: 9990;
+  }
+
+  /* ============================================================
+     SCROLLBAR
+  ============================================================ */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* ============================================================
+     NAV
+  ============================================================ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(8,10,15,0.8);
+    backdrop-filter: blur(24px);
+    border-bottom: 0.5px solid var(--border);
+    transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 0.85rem 4rem; }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    position: relative;
+  }
+  .nav-logo::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .nav-logo:hover::after { transform: scaleX(1); }
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; font-weight: 400;
+    color: var(--muted); text-decoration: none;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.25s;
+  }
+  .nav-links a:hover { color: var(--off-white); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ============================================================
+     HERO
+  ============================================================ */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 4rem 4rem;
+    position: relative; overflow: hidden;
+  }
+
+  /* animated grid bg */
+  .hero-grid-bg {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image:
+      linear-gradient(var(--off-white) 1px, transparent 1px),
+      linear-gradient(90deg, var(--off-white) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  /* floating orbs */
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none;
+    animation: orbFloat 12s ease-in-out infinite;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(200,255,77,0.06);
+    top: -100px; right: -100px;
+    animation-delay: 0s;
+  }
+  .orb-2 {
+    width: 350px; height: 350px;
+    background: rgba(77,255,180,0.05);
+    bottom: 50px; left: 10%;
+    animation-delay: -4s;
+  }
+  .orb-3 {
+    width: 250px; height: 250px;
+    background: rgba(200,255,77,0.04);
+    top: 40%; left: 40%;
+    animation-delay: -8s;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(30px, -40px) scale(1.05); }
+    66%       { transform: translate(-20px, 20px) scale(0.97); }
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    opacity: 0; animation: fadeUp 0.7s 0.1s ease forwards;
+  }
+  .hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+
+  /* pulsing dot */
+  .hero-tag::after {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 800; line-height: 0.95;
+    letter-spacing: -0.03em; margin-bottom: 0.2em;
+    opacity: 0; animation: fadeUp 0.7s 0.2s ease forwards;
+  }
+  .name-dim { color: rgba(242,240,232,0.18); }
+  .name-hi  { color: var(--off-white); }
+
+  /* glitch effect on hover */
+  .hero h1:hover .name-hi {
+    animation: glitch 0.4s steps(2) 1;
+  }
+  @keyframes glitch {
+    0%   { text-shadow: 2px 0 var(--accent), -2px 0 var(--accent2); }
+    20%  { text-shadow: -3px 0 var(--accent2), 3px 0 var(--accent); clip-path: inset(10% 0 70% 0); }
+    40%  { text-shadow: 3px 2px var(--accent); clip-path: inset(60% 0 10% 0); }
+    60%  { text-shadow: -1px 0 var(--accent2), 1px 0 var(--accent); }
+    80%  { text-shadow: 2px -1px var(--accent); clip-path: none; }
+    100% { text-shadow: none; }
+  }
+
+  .hero-roles {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin: 2rem 0;
+    opacity: 0; animation: fadeUp 0.7s 0.35s ease forwards;
+  }
+  .role-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.06em;
+    padding: 0.4rem 1rem;
+    border: 0.5px solid rgba(200,255,77,0.3);
+    border-radius: 100px;
+    color: var(--accent); background: rgba(200,255,77,0.06);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .role-pill:hover { background: rgba(200,255,77,0.12); border-color: rgba(200,255,77,0.6); }
+
+  .hero-summary {
+    max-width: 580px;
+    font-size: 1.05rem; font-weight: 300;
+    color: rgba(242,240,232,0.6);
+    line-height: 1.8; margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 0.7s 0.45s ease forwards;
+  }
+
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.7s 0.55s ease forwards; }
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em;
+    padding: 0.9rem 2.2rem;
+    background: var(--accent); color: var(--black);
+    border: none; border-radius: 6px; cursor: none;
+    text-decoration: none; display: inline-block;
+    transition: transform 0.15s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%) skewX(-20deg);
+    transition: transform 0.4s;
+  }
+  .btn-primary:hover::before { transform: translateX(200%) skewX(-20deg); }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(200,255,77,0.3); }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; font-weight: 400; letter-spacing: 0.08em;
+    padding: 0.9rem 2.2rem;
+    background: transparent; color: var(--off-white);
+    border: 0.5px solid rgba(242,240,232,0.2);
+    border-radius: 6px; cursor: none;
+    text-decoration: none; display: inline-block;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .btn-ghost:hover { border-color: rgba(242,240,232,0.5); background: rgba(242,240,232,0.04); transform: translateY(-3px); }
+
+  .hero-stats {
+    position: absolute; right: 4rem; bottom: 4rem;
+    display: flex; flex-direction: column; gap: 2.5rem;
+    text-align: right;
+    opacity: 0; animation: fadeUp 0.7s 0.65s ease forwards;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem; font-weight: 800;
+    color: var(--off-white); line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.15rem;
+  }
+  .stat-line {
+    width: 40px; height: 1px;
+    background: var(--border);
+    margin-left: auto;
+    margin-bottom: 2rem;
+  }
+
+  /* ============================================================
+     SECTION SCAFFOLD
+  ============================================================ */
+  section { padding: 7rem 4rem; }
+  .section-header { margin-bottom: 4rem; }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .section-subtitle {
+    font-size: 0.95rem; color: var(--muted);
+    max-width: 480px; margin-top: 0.75rem; line-height: 1.7;
+  }
+
+  /* reveal on scroll */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ============================================================
+     WEB APPS
+     ─────────────────────────────────────────────────────────────
+     HOW TO ADD A NEW APP:
+     Copy one entire <!-- APP CARD START --> ... <!-- APP CARD END -->
+     block, paste it inside .apps-grid, and update the content.
+
+     HOW TO REMOVE AN APP:
+     Delete the block between <!-- APP CARD START --> and <!-- APP CARD END -->
+
+     HOW TO UPDATE DEMO LINK:
+     Find the .card-demo-link <a> inside the card and change href="YOUR_LINK"
+  ============================================================ */
+  #apps { background: var(--black); border-top: 0.5px solid var(--border); }
+
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5px;
+  }
+
+  .app-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border: 0.5px solid var(--border);
+    cursor: none;
+    transition: background 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .app-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(200,255,77,0.06) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .app-card:hover::before { opacity: 1; }
+  .app-card::after {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .app-card:hover::after { transform: scaleX(1); }
+  .app-card:hover { background: #141820; transform: translateY(-4px); }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; color: rgba(200,255,77,0.35);
+    letter-spacing: 0.1em; margin-bottom: 1.5rem;
+  }
+  .card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem; font-size: 1.4rem;
+    transition: transform 0.3s;
+  }
+  .app-card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
+  .card-icon.green { background: rgba(200,255,77,0.1); }
+  .card-icon.teal  { background: rgba(77,255,180,0.1); }
+  .card-icon.amber { background: rgba(255,180,77,0.1); }
+  .card-icon.blue  { background: rgba(77,150,255,0.1); }
+  .card-icon.pink  { background: rgba(255,77,150,0.1); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 0.6rem; color: var(--off-white);
+  }
+  .card-desc {
+    font-size: 0.88rem; color: rgba(242,240,232,0.55);
+    line-height: 1.7; margin-bottom: 1.5rem; flex: 1;
+  }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.63rem; letter-spacing: 0.06em;
+    padding: 0.25rem 0.6rem;
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(255,255,255,0.09);
+    border-radius: 4px; color: var(--muted);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tag:hover { color: var(--off-white); border-color: rgba(255,255,255,0.25); }
+
+  .card-result {
+    padding-top: 1.25rem;
+    border-top: 0.5px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .result-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.66rem; font-weight: 500;
+    padding: 0.28rem 0.7rem;
+    background: rgba(200,255,77,0.08);
+    border: 0.5px solid rgba(200,255,77,0.22);
+    border-radius: 100px; color: var(--accent);
+  }
+
+  /* ── DEMO LINK ── */
+  .card-demo-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.07em;
+    color: var(--accent2); text-decoration: none;
+    padding: 0.55rem 1rem;
+    border: 0.5px solid rgba(77,255,180,0.25);
+    border-radius: 6px;
+    background: rgba(77,255,180,0.05);
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    width: fit-content;
+  }
+  .card-demo-link:hover {
+    background: rgba(77,255,180,0.12);
+    border-color: rgba(77,255,180,0.5);
+    transform: translateX(4px);
+  }
+  .card-demo-link .arrow { transition: transform 0.2s; }
+  .card-demo-link:hover .arrow { transform: translateX(3px); }
+
+  /* ============================================================
+     AUTOMATIONS
+     ─────────────────────────────────────────────────────────────
+     HOW TO ADD A NEW AUTOMATION:
+     Copy one entire <!-- AUTOMATION ITEM START --> ... <!-- AUTOMATION ITEM END -->
+     block and paste it inside .automation-list.
+
+     HOW TO REMOVE:
+     Delete the block between the START and END comments.
+
+     HOW TO UPDATE DEMO LINK:
+     Find the .auto-demo-link <a> and change href="YOUR_LINK"
+  ============================================================ */
+  #automations { background: #070910; border-top: 0.5px solid var(--border); }
+
+  .automation-list { display: flex; flex-direction: column; gap: 1.5px; }
+
+  .automation-item {
+    background: var(--card-bg);
+    border: 0.5px solid var(--border);
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    cursor: none;
+    transition: background 0.25s, transform 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .automation-item::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(180deg, var(--accent2), var(--accent));
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .automation-item:hover::before { transform: scaleY(1); }
+  .automation-item:hover { background: #0d1018; transform: translateX(4px); }
+
+  .auto-left {}
+  .auto-industry {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent2); margin-bottom: 0.6rem;
+  }
+  .auto-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 0.6rem; color: var(--off-white);
+  }
+  .auto-desc {
+    font-size: 0.88rem; color: rgba(242,240,232,0.55);
+    max-width: 620px; line-height: 1.7; margin-bottom: 1rem;
+  }
+  .auto-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+
+  /* ── AUTO DEMO LINK ── */
+  .auto-demo-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.07em;
+    color: var(--accent); text-decoration: none;
+    padding: 0.5rem 0.9rem;
+    border: 0.5px solid rgba(200,255,77,0.25);
+    border-radius: 6px;
+    background: rgba(200,255,77,0.05);
+    transition: background 0.2s, border-color 0.2s;
+    width: fit-content;
+  }
+  .auto-demo-link:hover {
+    background: rgba(200,255,77,0.12);
+    border-color: rgba(200,255,77,0.5);
+  }
+
+  .auto-right {
+    display: flex; flex-direction: column;
+    align-items: flex-end; justify-content: space-between;
+    min-width: 160px;
+  }
+  .auto-metric { text-align: right; }
+  .metric-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 800;
+    color: var(--accent2); line-height: 1;
+  }
+  .metric-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.2rem;
+  }
+  .auto-branches { display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; }
+  .branch-dot {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.63rem; color: var(--muted);
+  }
+  .branch-dot::before {
+    content: ''; display: inline-block;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent2); opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================
+     SKILLS
+  ============================================================ */
+  #skills { background: var(--black); border-top: 0.5px solid var(--border); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5px;
+  }
+  .skill-group {
+    background: var(--card-bg);
+    padding: 2rem;
+    border: 0.5px solid var(--border);
+    transition: background 0.2s;
+  }
+  .skill-group:hover { background: #141820; }
+  .skill-group-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1.25rem;
+  }
+  .skill-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .skill-item {
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    padding: 0.35rem 0.8rem;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 4px; color: var(--off-white);
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.15s, background 0.2s;
+  }
+  .skill-item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.07); }
+  .skill-item.accent  { border-color: rgba(200,255,77,0.3);  color: var(--accent);  background: rgba(200,255,77,0.05); }
+  .skill-item.accent2 { border-color: rgba(77,255,180,0.3);  color: var(--accent2); background: rgba(77,255,180,0.05); }
+  .skill-item.accent:hover  { background: rgba(200,255,77,0.12); }
+  .skill-item.accent2:hover { background: rgba(77,255,180,0.12); }
+
+  /* ============================================================
+     CONTACT
+  ============================================================ */
+  #contact { background: #070910; border-top: 0.5px solid var(--border); }
+  .contact-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+    align-items: start;
+  }
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.03em; margin-bottom: 1.5rem;
+  }
+  .contact-title .highlight { color: var(--accent); }
+  .contact-text { font-size: 0.95rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.5rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: 1rem;
+    text-decoration: none;
+    padding: 1rem 1.25rem;
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    background: var(--card-bg);
+  }
+  .contact-link:hover {
+    border-color: rgba(200,255,77,0.3);
+    background: rgba(200,255,77,0.04);
+    transform: translateX(6px);
+  }
+  .contact-link-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; background: rgba(255,255,255,0.05);
+    flex-shrink: 0;
+  }
+  .contact-link-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .contact-link-value { font-size: 0.88rem; color: var(--off-white); margin-top: 0.1rem; }
+
+  /* ── FORM ── */
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .form-input, .form-textarea {
+    background: var(--card-bg);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 6px; color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 0.85rem 1rem; outline: none; resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: rgba(200,255,77,0.4);
+    box-shadow: 0 0 0 3px rgba(200,255,77,0.07);
+  }
+  .form-textarea { min-height: 130px; }
+
+  /* ── SUCCESS MSG ── */
+  #form-success {
+    display: none; padding: 1rem 1.25rem;
+    background: rgba(77,255,180,0.08);
+    border: 0.5px solid rgba(77,255,180,0.3);
+    border-radius: 8px; color: var(--accent2);
+    font-family: 'DM Mono', monospace; font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ============================================================
+     FOOTER
+  ============================================================ */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem; font-weight: 800; color: var(--accent);
+  }
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; color: var(--muted); letter-spacing: 0.08em;
+  }
+  .footer-back {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em;
+    text-decoration: none; display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .footer-back:hover { color: var(--accent); }
+
+  /* ============================================================
+     ANIMATIONS
+  ============================================================ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     RESPONSIVE
+  ============================================================ */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .hero { padding: 6rem 1.5rem 8rem; }
+    .hero-stats { position: static; margin-top: 3rem; flex-direction: row; gap: 2rem; text-align: left; }
+    .stat-line { display: none; }
+    .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .automation-item { grid-template-columns: 1fr; }
+    .auto-right { flex-direction: row; align-items: center; min-width: auto; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+
+  /* ============================================================
+     TYPED CURSOR IN HERO
+  ============================================================ */
+  .typed-cursor { display: inline-block; width: 3px; height: 0.9em; background: var(--accent); margin-left: 4px; animation: blink 1s step-end infinite; vertical-align: middle; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
 </head>
 <body>
-      <!--==================== HEADER ====================-->
-    <header class="header" id="header">
-        <nav class="nav container">
-            <a href="#" class="nav__logo">
-                <span class="nav__logo-circle">C</span>
-                <span class="nav__logo-name">Charles Kalu</span>
-            </a>
 
-            <div class="nav__menu" id="nav-menu">
-                <span class="nav__title">Menu</span>
+<!-- ══════════════════════════════════════════
+     CUSTOM CURSOR
+════════════════════════════════════════════ -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-                <h3 class="nav__name">Charles</h3>
+<!-- ══════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-logo">K·I·O</div>
+  <div class="nav-links">
+    <a href="#apps">Web Apps</a>
+    <a href="#automations">Automations</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
 
-                <ul class="nav__list">
-                    <li class="nav__item">
-                        <a href="#home" class="nav__link active-link">Home</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="#about" class="nav__link">About Me</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="#projects" class="nav__link">Projects</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="#contact" class="nav__link nav__link-button">Contact Me</a>
-                    </li>
-                </ul>
+<!-- ══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-                <!-- close button -->
-                <div class="nav__close" id="nav-close">
-                    <i class="ri-close-line"></i>
-                </div>
-            </div>
+  <div class="hero-tag">Available for remote roles</div>
 
-            <div class="nav__buttons">
-                <!-- Theme button -->
-                <i class="ri-moon-line change-theme" id="theme-button"></i>
+  <h1>
+    <span class="name-dim">Kalu</span><br>
+    <span class="name-hi">Ifeanyi</span><br>
+    <span class="name-hi">Obinna</span>
+  </h1>
 
-                <!-- toggle button -->
-                <div class="nav__toggle" id="nav-toggle">
-                    <i class="ri-menu-4-line"></i>
-                </div>
-            </div>
-        </nav>
-         
-    </header>
+  <div class="hero-roles">
+    <span class="role-pill">AI Automation Engineer</span>
+    <span class="role-pill">Backend Systems Developer</span>
+    <span class="role-pill">Workflow Architect</span>
+  </div>
 
-    <!--==================== MAIN ====================-->
-    <main class="main">
-        <!--==================== HOME ====================-->
-        <section class="home section" id="home">
-        <div class="home__container container grid">
-            <div class="home__name">
-                Charles Kalu
-            </div>
+  <!-- EDIT: Update your personal tagline here -->
+  <p class="hero-summary">
+    I build systems that <em>eliminate bottlenecks</em> — translating messy, manual business processes into production-grade automated workflows and scalable backend APIs. 3+ years delivering real results across healthcare, logistics, finance, and education.
+  </p>
 
-            <div class="home__perfil">
-                <div class="home__image">
-                    <img src="./assets/images/me/IMG_1559.jpeg" alt="image" class="home__img">
-                    <div class="home__shadow"></div>
+  <div class="hero-ctas">
+    <a href="#apps" class="btn-primary">View my work</a>
+    <a href="#contact" class="btn-ghost">Get in touch</a>
+  </div>
 
-                    <img src="./assets/images/curved-arrow.svg" alt="" class="home__arrow">
-                    <img src="./assets/images/random-lines.svg" alt="" class="home__line">
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num" data-target="95">0</div>
+      <div class="stat-label">% avg. time reduction</div>
+    </div>
+    <div class="stat-line"></div>
+    <div>
+      <div class="stat-num">3+</div>
+      <div class="stat-label">Years production</div>
+    </div>
+    <div class="stat-line"></div>
+    <div>
+      <div class="stat-num">0</div>
+      <div class="stat-label">Downtime — 18 months</div>
+    </div>
+  </div>
+</section>
 
-                    <div class="geometric-box"></div>
-                </div>
+<!-- ══════════════════════════════════════════
+     SECTION 01 — WEB APPLICATIONS
+     ─────────────────────────────────────────
+     TO ADD A PROJECT:  Copy an APP CARD block below and paste it inside .apps-grid
+     TO REMOVE:         Delete the block between APP CARD START and APP CARD END
+     TO UPDATE LINK:    Change href="#" in .card-demo-link to your actual URL
+════════════════════════════════════════════ -->
+<section id="apps">
+  <div class="section-header reveal">
+    <div class="section-num">01 — Web Applications</div>
+    <h2 class="section-title">Production-grade<br>systems built to scale</h2>
+    <p class="section-subtitle">Backend APIs and full-stack systems deployed in real production environments across multiple industries.</p>
+  </div>
 
-                <div class="home__social">
-                    <a href="#" target="_blank" class="home__social-link">
-                        <i class="ri-instagram-line"></i>
-                    </a>
-                    
-                    <a href="https://www.linkedin.com/in/ifeanyi-charles-kalu-5a7336234" target="_blank" class="home__social-link">
-                        <i class="ri-linkedin-box-line"></i>
-                    </a>
-                    
-                    <a href="https://github.com/Burger-karl" target="_blank" class="home__social-link">
-                        <i class="ri-github-line"></i>
-                    </a>
-                    
-                </div>
-            </div>
+  <div class="apps-grid">
 
-            <div class="home__info">
-                <p class="home__description">
-                    <b>Backend Developer</b>, with the requisite knowledge in web development
-                    and design, I offer the best projects resulting in quality work.
-                </p>
+    <!-- ── APP CARD START ── -->
+    <div class="app-card reveal">
+      <div class="card-num">APP / 001</div>
+      <!-- EDIT: Change the emoji icon -->
+      <div class="card-icon green">⚡</div>
+      <!-- EDIT: Change the title -->
+      <div class="card-title">CEK Alpha Consultants Platform</div>
+      <!-- EDIT: Change the description -->
+      <p class="card-desc">Scalable Django/DRF backend supporting thousands of concurrent users. Features RBAC across 6 microservices, OTP-based MFA, and containerised deployments achieving zero unplanned downtime over 18 months.</p>
+      <!-- EDIT: Add / remove tags as needed -->
+      <div class="card-tags">
+        <span class="tag">Python</span><span class="tag">Django</span><span class="tag">DRF</span>
+        <span class="tag">PostgreSQL</span><span class="tag">Redis</span><span class="tag">Docker</span><span class="tag">CI/CD</span>
+      </div>
+      <!-- EDIT: Update or remove result badges -->
+      <div class="card-result">
+        <span class="result-badge">↓ 35% query time</span>
+        <span class="result-badge">0 downtime</span>
+      </div>
+      <!-- EDIT: Replace href="#" with your live / GitHub / demo URL -->
+      <a href="https://cek-gx7h.onrender.com/" class="card-demo-link" target="_blank">
+        View live project <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- ── APP CARD END ── -->
 
-                <a href="#about" class="home__scroll">
-                    <div class="home__scroll-box">
-                        <i class="ri-arrow-down-s-line"></i>
-                    </div>
+    <!-- ── APP CARD START ── -->
+    <div class="app-card reveal">
+      <div class="card-num">APP / 002</div>
+      <div class="card-icon teal">🚚</div>
+      <div class="card-title">Logistics & Fleet Tracking Platform</div>
+      <p class="card-desc">RESTful APIs serving web and mobile clients at high concurrency for SurgeSeven. Integrated real-time ITrackSafeX fleet tracking, Paystack & Flutterwave payment gateways, and OAuth2 auth from the ground up.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span><span class="tag">Django</span><span class="tag">Paystack</span>
+        <span class="tag">Flutterwave</span><span class="tag">OAuth2</span><span class="tag">Redis</span>
+      </div>
+      <div class="card-result">
+        <span class="result-badge">99.5% uptime</span>
+        <span class="result-badge">↓ 40% defects</span>
+      </div>
+      <!-- EDIT: Replace href="#" with your live / GitHub / demo URL -->
+      <a href="https://www.surgesevenltd.com/" class="card-demo-link" target="_blank">
+        View live project <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- ── APP CARD END ── -->
 
-                    <span class="home__scroll-text">Scroll Down</span>
-                </a>
-            </div>
+    <!-- ── APP CARD START ── -->
+    <div class="app-card reveal">
+      <div class="card-num">APP / 003</div>
+      <div class="card-icon amber">🏥</div>
+      <div class="card-title">Hospital Management System</div>
+      <p class="card-desc">Secure backend handling sensitive patient and pharmaceutical data with 12-role RBAC, real-time inventory APIs, and full healthcare compliance. Redis caching cut API response latency from ~800ms to under 200ms.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span><span class="tag">Django</span><span class="tag">PostgreSQL</span>
+        <span class="tag">Redis</span><span class="tag">RBAC</span><span class="tag">Healthcare</span>
+      </div>
+      <div class="card-result">
+        <span class="result-badge">800ms → &lt;200ms</span>
+        <span class="result-badge">12 role types</span>
+      </div>
+      <!-- EDIT: Replace href="#" with your live / GitHub / demo URL -->
+      <a href="#" class="card-demo-link" target="_blank">
+        View live project <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- ── APP CARD END ── -->
+
+    <!-- ── APP CARD START ── -->
+    <div class="app-card reveal">
+      <div class="card-num">APP / 004</div>
+      <div class="card-icon blue">🚀</div>
+      <div class="card-title">Startup CMS & Backend (Ailurus)</div>
+      <p class="card-desc">Full production-ready Django/PostgreSQL backend and CMS delivered within a 3-month contract window, enabling the startup to launch on schedule and onboard their first paying customers.</p>
+      <div class="card-tags">
+        <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">CMS</span><span class="tag">REST API</span>
+      </div>
+      <div class="card-result">
+        <span class="result-badge">Delivered on time</span>
+        <span class="result-badge">First customers live</span>
+      </div>
+      <!-- EDIT: Replace href="#" with your live / GitHub / demo URL -->
+      <a href="https://burger-karl.github.io/Ailurus/" class="card-demo-link" target="_blank">
+        View live project <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- ── APP CARD END ── -->
+
+    <!-- ── APP CARD START ── -->
+    <div class="app-card reveal">
+      <div class="card-num">APP / 004</div>
+      <div class="card-icon blue">🚀</div>
+      <div class="card-title">Moviesroom Project</div>
+      <p class="card-desc">Full production-ready netflix clone movies web application displaying variety of movies.</p>
+      <div class="card-tags">
+        <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">Angular</span><span class="tag">UI</span>
+      </div>
+      <div class="card-result">
+        <span class="result-badge">Delivered on time</span>
+        <span class="result-badge">First customers live</span>
+      </div>
+      <!-- EDIT: Replace href="#" with your live / GitHub / demo URL -->
+      <a href="https://moviesroom.vercel.app/" class="card-demo-link" target="_blank">
+        View live project <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- ── APP CARD END ── -->
+
+    <!-- ═══════════════════════════════════════════
+         PASTE NEW APP CARDS HERE — copy block above
+    ════════════════════════════════════════════ -->
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 02 — AUTOMATION WORKFLOWS
+     ─────────────────────────────────────────
+     TO ADD:    Copy an AUTOMATION ITEM block and paste inside .automation-list
+     TO REMOVE: Delete the block between AUTOMATION ITEM START and END
+     TO UPDATE LINK: Change href="#" in .auto-demo-link
+════════════════════════════════════════════ -->
+<section id="automations">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Automation Workflows</div>
+    <h2 class="section-title">AI agents that work<br>so your team doesn't have to</h2>
+    <p class="section-subtitle">End-to-end workflow automation using Make.com, n8n, and AI APIs — cutting hours of manual work down to seconds.</p>
+  </div>
+
+  <div class="automation-list">
+
+    <!-- ── AUTOMATION ITEM START ── -->
+    <div class="automation-item reveal">
+      <div class="auto-left">
+        <!-- EDIT: Industry / category -->
+        <div class="auto-industry">Accounting / Finance</div>
+        <!-- EDIT: Title -->
+        <div class="auto-title">Client Inquiry AI Email Agent</div>
+        <!-- EDIT: Description -->
+        <p class="auto-desc">Fully automated client email triage for an accounting consultancy. Classifies 6 intent types, routes to 3 parallel branches (CRM, Slack, Gmail Draft), and manages the full email lifecycle — end to end — from a single trigger. Zero manual routing.</p>
+        <!-- EDIT: Stack tags -->
+        <div class="auto-stack">
+          <span class="tag">Make.com</span><span class="tag">GPT-4</span><span class="tag">Gmail</span>
+          <span class="tag">HubSpot</span><span class="tag">Slack</span>
         </div>
-        </section>
-
-        <!--==================== ABOUT ====================-->
-        <section class="about section" id="about">
-            <div class="about__container container grid">
-                <h2 class="section__title-1">
-                    <span>About Me.</span>
-                </h2>
-
-                <div class="about__perfil">
-                    <div class="about__image">
-                        <img src="./assets/images/me/IMG_1559.jpeg" alt="image" class="about__img">
-
-                        <div class="about__shadow"></div>
-
-                        <div class="geometric-box"></div>
-                        <img src="./assets/images/random-lines.svg" alt="" class="about__line">
-                        <div class="about__box"></div>
-                    </div>
-                </div>
-
-                <div class="about__info">
-                    <p class="about__description">
-                        Passionate about creating <b>Web Applications</b> with 
-                        <b>UI/UX User Interface</b>, I have years of experience 
-                        building web applications and <b>scalable APIs</b> and i get 
-                        nice reviews from happy clients.
-                    </p>
-
-                    <ul class="about__list">
-                        <li class="about__item">
-                            <b>My Skills Are:</b> HTML, CSS, JavaScript,
-                            Angular, Bootstrap, Git & GitHub, Django & Flask,
-                            Docker, Postman, PostgreSQL, MySql & Docker.
-                        </li>
-                    </ul>
-
-                    <div class="about__buttons">
-                        <a href="#contact" class="button">
-                            <i class="ri-send-plane-line"></i> Contact Me
-                        </a>
-
-                        <a href="https://www.linkedin.com/in/ifeanyi-charles-kalu-5a7336234" target="_blank" class="button__ghost">
-                            <i class="ri-linkedin-box-line"></i>
-                        </a>
-                    </div>
-                    <br>
-                    <p><strong>Email: charleskalu863@gmail.com</strong></p>
-                </div>
-            </div>
-        </section>
-
-        <!--==================== SERVICES ====================-->
-        <section class="services section">
-            <h2 class="section__title-2">
-                <span>Services.</span>
-            </h2>
-
-            <div class="services__container container grid">
-                <article class="services__card">
-                    <div class="services__border"></div>
-
-                    <div class="services__content">
-                        <div class="services__icon">
-                            <div class="services__box"></div>
-                            <i class="ri-layout-4-line"></i>
-                        </div>
-
-                        <h2 class="services__title">Web Design</h2>
-
-                        <p class="services__description">
-                            Beautiful and elegant designs with
-                            interfaces that are intuitive, efficient
-                            quite pleasant to the user.
-                        </p>
-                    </div>
-                </article>
-
-                <article class="services__card">
-                    <div class="services__border"></div>
-
-                    <div class="services__content">
-                        <div class="services__icon">
-                            <div class="services__box"></div>
-                            <i class="ri-code-box-line"></i>
-                        </div>
-
-                        <h2 class="services__title">Web Development</h2>
-
-                        <p class="services__description">
-                            Custom web development tailored to your 
-                            specifications, designed to provide a 
-                            flawless user experience.
-                        </p>
-                    </div>
-                </article>
-
-                <article class="services__card">
-                    <div class="services__border"></div>
-
-                    <div class="services__content">
-                        <div class="services__icon">
-                            <div class="services__box"></div>
-                            <i class="ri-smartphone-line"></i>
-                        </div>
-
-                        <h2 class="services__title">Mobile App</h2>
-
-                        <p class="services__description">
-                            Design and transform website projects
-                            into mobile apps to provide a seamless
-                            user experience.
-                        </p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!--==================== PROJECTS ====================-->
-        <section class="projects section" id="projects">
-            <h2 class="section__title-1">
-                <span>Projects.</span>
-            </h2>
-
-            <div class="projects__container container grid">
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/Screenshot (320).png" alt="image" class="projects__img">
-
-                        <a href="https://moviesroom.vercel.app/" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">Web App</h3>
-                        <h2 class="projects__title">Moviesroom</h2>
-
-                        <p class="projects__description">
-                            Moviesroom Project is a web application 
-                            designed for movie lovers, it brings you
-                            variety of movies. Created using Angular.
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/moviesroom" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/Screenshot (319).png" alt="image" class="projects__img">
-
-                        <a href="https://burger-karl.github.io/Cars/" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">Website</h3>
-                        <h2 class="projects__title">BurgAutos</h2>
-
-                        <p class="projects__description">
-                            BurgAutos Project is a landing page
-                            for an automobile company showing
-                            different cars up for sale and maintenance
-                            offers.
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/Cars" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/surgeAPI.png" alt="image" class="projects__img">
-
-                        <a href="https://surge-eno7.onrender.com/swagger/" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">API</h3>
-                        <h2 class="projects__title">Surge API</h2>
-
-                        <p class="projects__description">
-                            Surge API project is a backend API designed
-                            for the surgeseven mobile application, a Saas
-                            project that offers logistics services and 
-                            created using Django and Django rest framework.
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/Surge" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/joy_inspire.png" alt="image" class="projects__img">
-
-                        <a href="https://joy-inspire.onrender.com/" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">Web App</h3>
-                        <h2 class="projects__title">Joy Inspired Project</h2>
-
-                        <p class="projects__description">
-                            Joy Inspired project is a web application developed 
-                            for an NGO specialising in needs of widows and  
-                            orphans in the country.
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/charity" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/Screenshot (804) copy.png" alt="image" class="projects__img">
-
-                        <a href="https://burger-karl.github.io/Ailurus/#" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">Website</h3>
-                        <h2 class="projects__title">Ailurus Website</h2>
-
-                        <p class="projects__description">
-                            The Ailurus Project is a website or landing page 
-                            which facilitates the awareness of prospective 
-                            users to the project.
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/Ailurus" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-
-
-                <article class="projects__card">
-                    <div class="projects__image">
-                        <img src="./assets/images/portfolio/surgeseven.png" alt="image" class="projects__img">
-
-                        <a href="https://surgesevenltd.com/" target="_blank" class="projects__button button">
-                            <i class="ri-arrow-right-up-line"></i>
-                        </a>
-                    </div>
-
-                    <div class="projects__content">
-                        <h3 class="projects__subtitle">Web App</h3>
-                        <h2 class="projects__title">SurgeSeven App</h2>
-
-                        <p class="projects__description">
-                            SurgeSeven project is a startup Saas project designed
-                            to render Logistics services and aid technological 
-                            development. It was created with Django Framework
-                        </p>
-                    </div>
-
-                    <div class="projects__buttons">
-                        <a href="https://github.com/Burger-karl/surgeseven_de" target="_blank" class="projects__link">
-                            <i class="ri-github-line"></i> View
-                        </a>
-
-                        <a href="https://twitter.com/Kray_karl" target="_blank" class="projects__link">
-                            <i class="ri-twitter-line"></i> View
-                        </a>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!--==================== CONTACT ====================-->
-        <section class="contact section" id="contact">
-            <div class="contact__container grid">
-
-                <div class="contact__data">
-                    <h2 class="section__title-2">
-                        <span>Contact Me.</span>
-                    </h2>
-
-                    <p class="contact__description-1">
-                        I will read all emails. Send me any
-                        message you want and i'll get back to you.
-                    </p>
-
-                    <p class="contact__description-2">
-                        I need your <b>Name</b> and <b>Email Address</b>, but
-                        you won't receive anything other than your reply.
-                    </p>
-
-                    <div class="geometric-box"></div>
-                </div>
-
-                <div class="contact__mail">
-                    <h2 class="contact__title">
-                        Send Me A Message
-                    </h2>
-
-                    <form action="" class="contact__form" id="contact-form">
-                        <div class="contact__group">
-                            <div class="contact__box">
-                                <input type="text" name="user_name" class="contact__input" id="name" placeholder="First Name" required>
-                                <label for="name" class="contact__label">First Name</label>
-                            </div>
-
-                            <div class="contact__box">
-                                <input type="email" name="user_email" class="contact__input" id="email" placeholder="Email Address" required>
-                                <label for="email" class="contact__label">Email Address</label>
-                            </div>
-                        </div>
-
-                        <div class="contact__box">
-                            <input type="text" name="user_subject" class="contact__input" id="subject" placeholder="Subject" required>
-                            <label for="subject" class="contact__label">Subject</label>
-                        </div>
-
-                        <div class="contact__box contact__area">
-                            <textarea name="user__message" id="message" class="contact__input" required placeholder="Message"></textarea>
-                            <label for="message" class="contact__label">Message</label>
-                        </div>
-
-                        <!-- <p class="contact__message" id="contact-message">Message sent successfully</p> -->
-
-                        <button type="submit" class="contact__button button">
-                            <i class="ri-send-plane-line"></i> Send Message
-                        </button>
-                    </form>
-                </div>
-
-                <div class="contact__social">
-                    <img src="./assets/images/curved-arrow.svg" alt="" class="contact__social-arrow">
-
-                    <div class="contact__social-data">
-                        <div>
-                            <p class="contact__social_description-1">
-                                <strong>email: charleskalu863@gmail.com</strong>
-                            </p>
-
-                            <hr>
-                            <p class="contact__social_description-2">
-                                Write me on my social networks
-                            </p>
-                        </div>
-
-                        <div class="contact__social-links">
-                            <a href="https://twitter.com/Kray_karl" target="_blank" class="contact__social-link">
-                                <i class="ri-twitter-line"></i>
-                            </a>
-
-                            <a href="#" target="_blank" class="contact__social-link">
-                                <i class="ri-instagram-line"></i>
-                            </a>
-
-                            <a href="https://www.linkedin.com/in/ifeanyi-charles-kalu-5a7336234" target="_blank" class="contact__social-link">
-                                <i class="ri-linkedin-box-line"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!--==================== FOOTER ====================-->
-    <footer class="footer">
-        <div class="footer__container container grid">
-            <ul class="footer__links">
-                <li>
-                    <a href="#about" class="footer__link">About</a>
-                </li>
-
-                <li>
-                    <a href="#services" class="footer__link">Services</a>
-                </li>
-
-                <li>
-                    <a href="#projects" class="footer__link">Projects</a>
-                </li>
-            </ul>
-
-            <span class="footer__copy">
-                &#169; All Rights Reserved By
-                <a href="">Charles.</a>
-            </span>
+        <!-- EDIT: Replace href="#" with your workflow demo / Loom / screenshot URL -->
+        <a href="#" class="auto-demo-link" target="_blank">View workflow demo →</a>
+      </div>
+      <div class="auto-right">
+        <div class="auto-metric">
+          <!-- EDIT: Key metric -->
+          <div class="metric-val">95%</div>
+          <div class="metric-label">Time reduction</div>
         </div>
-    </footer>
+        <!-- EDIT: Branch / feature highlights -->
+        <div class="auto-branches">
+          <div class="branch-dot">6-class intent engine</div>
+          <div class="branch-dot">3-branch router</div>
+          <div class="branch-dot">10-field JSON output</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── AUTOMATION ITEM END ── -->
 
-    <!--========== SCROLL UP ==========-->
-    <a href="#" class="scrollup" id="scroll-up">
-        <i class="ri-arrow-up-s-line"></i>
-    </a>
+    <!-- ── AUTOMATION ITEM START ── -->
+    <div class="automation-item reveal">
+      <div class="auto-left">
+        <div class="auto-industry">Finance / Lending</div>
+        <div class="auto-title">Loan Application AI Risk-Scoring Agent</div>
+        <p class="auto-desc">5-branch AI risk-scoring pipeline: Google Form trigger → AI scores applicants 1–100 → Router fires Auto-approve / Manual review / Decline / Docs incomplete / Fraud flag branches. Fraud branch fires Slack-only @channel alert — production-grade escalation logic.</p>
+        <div class="auto-stack">
+          <span class="tag">Make.com</span><span class="tag">AI Risk Scoring</span><span class="tag">Google Forms</span>
+          <span class="tag">HubSpot</span><span class="tag">Slack</span><span class="tag">Google Sheets</span>
+        </div>
+        <a href="#" class="auto-demo-link" target="_blank">View workflow demo →</a>
+      </div>
+      <div class="auto-right">
+        <div class="auto-metric">
+          <div class="metric-val" style="font-size:1.4rem;">Days→Min</div>
+          <div class="metric-label">Processing time</div>
+        </div>
+        <div class="auto-branches">
+          <div class="branch-dot">5-branch router</div>
+          <div class="branch-dot">1–100 AI scoring</div>
+          <div class="branch-dot">Fraud alert system</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── AUTOMATION ITEM END ── -->
 
-    <!--=============== SCROLLREVEAL ===============-->
-    <script src="assets/js/scrollreveal.min.js"></script>
-    
-    <!--=============== EMAIL JS ===============-->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- ── AUTOMATION ITEM START ── -->
+    <div class="automation-item reveal">
+      <div class="auto-left">
+        <div class="auto-industry">Education</div>
+        <div class="auto-title">Student Onboarding Automation Pipeline</div>
+        <p class="auto-desc">Fully automated student onboarding triggered by Google Form submission. Validates data, generates personalised welcome emails, logs to Sheets, and posts Slack notifications — all within seconds. Handles hundreds of submissions per day with smart follow-up for incomplete applications.</p>
+        <div class="auto-stack">
+          <span class="tag">n8n</span><span class="tag">Google Forms</span><span class="tag">Gmail</span>
+          <span class="tag">Google Sheets</span><span class="tag">Slack</span>
+        </div>
+        <a href="#" class="auto-demo-link" target="_blank">View workflow demo →</a>
+      </div>
+      <div class="auto-right">
+        <div class="auto-metric">
+          <div class="metric-val">↓80%</div>
+          <div class="metric-label">Incomplete backlog</div>
+        </div>
+        <div class="auto-branches">
+          <div class="branch-dot">Instant onboarding</div>
+          <div class="branch-dot">Smart follow-ups</div>
+          <div class="branch-dot">30–45 min → seconds</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── AUTOMATION ITEM END ── -->
 
-    <!--=============== MAIN JS ===============-->
-    <script src="assets/js/main.js"></script>
+    <!-- ── AUTOMATION ITEM START ── -->
+    <div class="automation-item reveal">
+      <div class="auto-left">
+        <div class="auto-industry">E-commerce</div>
+        <div class="auto-title">Order Fulfilment & Customer Notification Workflow</div>
+        <p class="auto-desc">End-to-end order management automation: Shopify orders trigger confirmation emails, live fulfilment tracker updates, and warehouse Slack alerts. A post-delivery branch automatically sends personalised review request emails 48 hours after shipping — fully hands-free.</p>
+        <div class="auto-stack">
+          <span class="tag">n8n</span><span class="tag">Shopify</span><span class="tag">Gmail</span>
+          <span class="tag">Slack</span><span class="tag">Google Sheets</span>
+        </div>
+        <a href="#" class="auto-demo-link" target="_blank">View workflow demo →</a>
+      </div>
+      <div class="auto-right">
+        <div class="auto-metric">
+          <div class="metric-val">3 hrs</div>
+          <div class="metric-label">Saved daily</div>
+        </div>
+        <div class="auto-branches">
+          <div class="branch-dot">Order confirmation</div>
+          <div class="branch-dot">Warehouse alerts</div>
+          <div class="branch-dot">Auto review requests</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── AUTOMATION ITEM END ── -->
+
+    <!-- ═══════════════════════════════════════════
+         PASTE NEW AUTOMATION ITEMS HERE
+    ════════════════════════════════════════════ -->
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 03 — SKILLS
+════════════════════════════════════════════ -->
+<section id="skills">
+  <div class="section-header reveal">
+    <div class="section-num">03 — Technical Stack</div>
+    <h2 class="section-title">Tools &amp; technologies</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-group reveal">
+      <div class="skill-group-title">AI &amp; Automation</div>
+      <div class="skill-items">
+        <span class="skill-item accent">Make.com</span>
+        <span class="skill-item accent">n8n</span>
+        <span class="skill-item accent">GPT-4</span>
+        <span class="skill-item accent">Claude API</span>
+        <span class="skill-item accent">Prompt Engineering</span>
+        <span class="skill-item accent">AI Intent Classification</span>
+        <span class="skill-item accent">Multi-branch Router Logic</span>
+      </div>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-title">Backend Engineering</div>
+      <div class="skill-items">
+        <span class="skill-item accent2">Python</span>
+        <span class="skill-item accent2">Django</span>
+        <span class="skill-item accent2">DRF</span>
+        <span class="skill-item accent2">FastAPI</span>
+        <span class="skill-item accent2">Flask</span>
+        <span class="skill-item accent2">RESTful APIs</span>
+        <span class="skill-item accent2">TDD / PyTest</span>
+      </div>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-title">Data &amp; Infrastructure</div>
+      <div class="skill-items">
+        <span class="skill-item">PostgreSQL</span>
+        <span class="skill-item">MySQL</span>
+        <span class="skill-item">Redis</span>
+        <span class="skill-item">Docker</span>
+        <span class="skill-item">GitHub Actions</span>
+        <span class="skill-item">CI/CD</span>
+        <span class="skill-item">Heroku</span>
+        <span class="skill-item">Render</span>
+      </div>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-title">Integrations</div>
+      <div class="skill-items">
+        <span class="skill-item">HubSpot</span>
+        <span class="skill-item">Slack</span>
+        <span class="skill-item">Gmail</span>
+        <span class="skill-item">Google Sheets</span>
+        <span class="skill-item">Shopify</span>
+        <span class="skill-item">Paystack</span>
+        <span class="skill-item">Flutterwave</span>
+        <span class="skill-item">OAuth2 / JWT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 04 — CONTACT
+════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <h2 class="contact-title">
+        Let's build<br>something<br><span class="highlight">great</span><br>together.
+      </h2>
+      <!-- EDIT: Update availability / location note -->
+      <p class="contact-text">Open to AI Automation, Backend Engineering, and product-focused engineering roles with high-growth remote teams. Based in Nigeria, available globally.</p>
+      <div class="contact-links">
+        <!-- EDIT: Update all contact links -->
+        <a class="contact-link" href="mailto:charleskalu863@gmail.com">
+          <div class="contact-link-icon">✉</div>
+          <div>
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">charleskalu863@gmail.com</div>
+          </div>
+        </a>
+        <a class="contact-link" href="https://github.com/Burger-karl" target="_blank">
+          <div class="contact-link-icon">⌥</div>
+          <div>
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/Burger-karl</div>
+          </div>
+        </a>
+        <!-- EDIT: Add your LinkedIn URL -->
+        <a class="contact-link" href="https://linkedin.com/in/YOUR-LINKEDIN-HANDLE" target="_blank">
+          <div class="contact-link-icon">🔗</div>
+          <div>
+            <div class="contact-link-label">LinkedIn</div>
+            <div class="contact-link-value">linkedin.com/in/kalu-ifeanyi-obinna</div>
+          </div>
+        </a>
+        <a class="contact-link" href="tel:+2348143932604">
+          <div class="contact-link-icon">◎</div>
+          <div>
+            <div class="contact-link-label">Phone</div>
+            <div class="contact-link-value">+234 814 393 2604</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label" for="fname">Your name</label>
+          <input class="form-input" id="fname" type="text" placeholder="Jane Smith">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="femail">Email address</label>
+          <input class="form-input" id="femail" type="email" placeholder="jane@company.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fsubject">Subject</label>
+          <input class="form-input" id="fsubject" type="text" placeholder="Role / Project / Inquiry">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fmsg">Message</label>
+          <textarea class="form-textarea" id="fmsg" placeholder="Tell me about the role or project..."></textarea>
+        </div>
+        <button class="btn-primary" id="form-btn" onclick="submitForm()" style="align-self:flex-start; cursor:none;">
+          Send message
+        </button>
+        <div id="form-success">✓ Message received — Charles will be in touch shortly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">K·I·O</div>
+  <div class="footer-copy">© 2026 Kalu Ifeanyi Obinna</div>
+  <a href="#home" class="footer-back">↑ Back to top</a>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+  /* ── Custom Cursor ── */
+  const cursor     = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  // Smooth trailing ring
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    cursorRing.style.left = rx + 'px';
+    cursorRing.style.top  = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scale on hover
+  document.querySelectorAll('a, button, .app-card, .automation-item, .skill-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width  = '20px';
+      cursor.style.height = '20px';
+      cursorRing.style.width  = '52px';
+      cursorRing.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width  = '12px';
+      cursor.style.height = '12px';
+      cursorRing.style.width  = '36px';
+      cursorRing.style.height = '36px';
+    });
+  });
+
+  /* ── Card spotlight (mouse position gradient) ── */
+  document.querySelectorAll('.app-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
+      const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
+      card.style.setProperty('--mx', x);
+      card.style.setProperty('--my', y);
+    });
+  });
+
+  /* ── Scroll-reveal ── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.08 + 's';
+    observer.observe(el);
+  });
+
+  /* ── Nav shrink on scroll ── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  /* ── Counter animation on stat numbers ── */
+  document.querySelectorAll('[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        let n = 0;
+        const step = target / 60;
+        const timer = setInterval(() => {
+          n = Math.min(n + step, target);
+          el.textContent = Math.round(n);
+          if (n >= target) clearInterval(timer);
+        }, 16);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el);
+  });
+
+  /* ── Form submit ── */
+  function submitForm() {
+    const name  = document.getElementById('fname').value.trim();
+    const email = document.getElementById('femail').value.trim();
+    const msg   = document.getElementById('fmsg').value.trim();
+    if (!name || !email || !msg) {
+      alert('Please fill in your name, email, and message.');
+      return;
+    }
+    document.getElementById('form-btn').textContent = 'Sending...';
+    setTimeout(() => {
+      document.getElementById('form-btn').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    }, 800);
+  }
+</script>
+
 </body>
 </html>
